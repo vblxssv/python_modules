@@ -23,7 +23,7 @@ class Plant:
 class GardenManager:
     def __init__(self):
         self.plants = []
-        self.water_tank = 10  # Начальный запас воды
+        self.water_tank = 10
 
     def add_plant(self, plant: Plant):
         if not plant.name:
@@ -31,7 +31,6 @@ class GardenManager:
         self.plants.append(plant)
 
     def water_plants(self):
-        # Логика с обязательной очисткой ресурсов
         print("Opening watering system")
         try:
             if self.water_tank < len(self.plants):
@@ -40,28 +39,42 @@ class GardenManager:
                 plant.water()
                 print(f"Watering {plant.name} - success")
         finally:
-            # Гарантируем закрытие крана в любом случае
             print("Closing watering system (cleanup)")
 
     def check_health(self):
         for plant in self.plants:
             if plant.water_lvl < 1:
-                raise WaterError(f"Error checking {plant.name}: Water level {plant.water_lvl} is too low (min 1)")
+                raise WaterError(
+                    f"Error checking {plant.name}: "
+                    f"Water level {plant.water_lvl} is too low (min 1)"
+                )
             elif plant.water_lvl > 10:
-                raise WaterError(f"Error checking {plant.name}: Water level {plant.water_lvl} is too high (max 10)")
+                raise WaterError(
+                    f"Error checking {plant.name}: "
+                    f"Water level {plant.water_lvl} is too high (max 10)"
+                )
             elif plant.sun_hours < 2:
-                raise PlantError(f"Error checking {plant.name}: Sunlight hours {plant.sun_hours} is too low (min 2)")
+                raise PlantError(
+                    f"Error checking {plant.name}: "
+                    f"Sunlight hours {plant.sun_hours} is too low (min 2)"
+                )
             elif plant.sun_hours > 12:
-                raise PlantError(f"Error checking {plant.name}: Sunlight hours {plant.sun_hours} is too high (max 12)")
+                raise PlantError(
+                    f"Error checking {plant.name}: "
+                    f"Sunlight hours {plant.sun_hours} is too high (max 12)"
+                )
             else:
-                print(f"{plant.name}: healthy (water: {plant.water_lvl}, sun: {plant.sun_hours})")
+                print(
+                    f"{plant.name}: healthy "
+                    f"(water: {plant.water_lvl}, sun: {plant.sun_hours})"
+                )
 
 
-def test_garden_management():
+def test_garden_management() -> None:
     garden = GardenManager()
     print("Adding plants to garden...")
     try:
-        garden.add_plant(Plant("tomato", 5, 8))
+        garden.add_plant(Plant("tomato", 5, 7))
         print("Added tomato successfully")
         garden.add_plant(Plant("lettuce", 8, 14))
         print("Added lettuce successfully")

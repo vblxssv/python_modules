@@ -10,17 +10,17 @@ class WaterError(GardenError):
     pass
 
 
-def check_plant_health(is_wilting: bool):
+def check_plant_health(is_wilting: bool) -> None:
     if is_wilting:
         raise PlantError("The tomato plant is wilting!")
 
 
-def check_water_levels(liters: int):
+def check_water_levels(liters: int) -> None:
     if liters < 5:
         raise WaterError("Not enough water in the tank!")
 
 
-def main():
+def main() -> None:
     print("=== Custom Garden Errors Demo ===")
     print("Testing PlantError...")
     try:
