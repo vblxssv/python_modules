@@ -72,7 +72,6 @@ def main():
     print("Memory usage: Constant (streaming)")
     print(f"Processing time: {end_time - start_time:.3f} seconds")
 
-    # === Демонстрация генераторов ===
     print("\n=== Generator Demonstration ===")
     print("Fibonacci sequence (first 10):", ", ".join(str(n)
                                                       for n in fibonacci(10)))

@@ -30,7 +30,8 @@ def main():
         print(F"Distance between {pos0} and {right}: "
               F"{distance(pos0, right)}\n")
     except ValueError as e:
-        print(F"Error parsing coordinates: {e}")
+        print(f"Error parsing coordinates: {e}")
+        print(F"Error details - Type: {type(e).__name__}, Args: {e.args}")
     print(F"Parsing invalid coordinates: {wrong_cords}")
     try:
         wrong = tuple([int(x) for x in wrong_cords.split(",")])
@@ -38,7 +39,8 @@ def main():
         print(F"Distance between {pos0} and {wrong}: "
               F"{distance(pos0, wrong)}\n")
     except ValueError as e:
-        print(F"Error parsing coordinates: {e}")
+        print(f"Error parsing coordinates: {e}")
+        print(F"Error details - Type: {type(e).__name__}, Args: {e.args}")
     print()
     unpacking((3, 4, 0), (3, 4, 0))
 
