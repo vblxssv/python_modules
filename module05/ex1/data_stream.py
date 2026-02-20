@@ -188,7 +188,7 @@ class StreamProcessor:
             critical_batch = stream.filter_data(batch, criteria="critical")
 
             # Обработка батча (обновляет processed_count и stats)
-            _ = stream.process_batch(batch)
+            stream.process_batch(batch)
 
             # Счётчик критических элементов для отчёта
             count = len(critical_batch)
@@ -248,7 +248,7 @@ def main():
     # В примере критические: 2 sensor alerts, 1 large transaction, 3 events
     mixed_batches = [
         ["temp:35", "temp:10"],              # SensorStream (2 critical)
-        ["buy:200", "buy:50", "sell:150", "buy:75"],  # TransactionStream (1 large)
+        ["buy:200", "buy:50", "sell:150", "buy:75"],
         ["login", "error", "logout"]         # EventStream (1 error)
     ]
     processor.process_mixed_batches(mixed_batches)
