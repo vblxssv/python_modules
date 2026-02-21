@@ -22,6 +22,18 @@ class ProcessingPipeline(ABC):
         self.stages.append(stage)
 
 
+class JSONAdapter(ProcessingPipeline):
+    pass
+
+
+class CSVAdapter(ProcessingPipeline):
+    pass
+
+
+class StreamAdapter(ProcessingPipeline):
+    pass
+
+
 class NexusManager:
     def __init__(self):
         self.pipelines: List[ProcessingPipeline] = []
