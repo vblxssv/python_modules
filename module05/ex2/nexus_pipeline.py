@@ -22,7 +22,6 @@ class OutputStage:
 class ProcessingPipeline(ABC):
     def __init__(self):
         self.stages: List[Stage] = []
-        self.pipeline_id: str
 
     def add_stage(self, stage: Union[Stage]):
         self.stages.append(stage)

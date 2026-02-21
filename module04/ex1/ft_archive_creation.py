@@ -6,7 +6,7 @@ def main():
     print(f"Initializing new storage unit: {filename}")
 
     try:
-        with open(filename, "w", encoding="utf-8") as f:
+        with open(filename, "w") as f:
             print("Storage unit created successfully...\n")
             print("Inscribing preservation data...")
 
