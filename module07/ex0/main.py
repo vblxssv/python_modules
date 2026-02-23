@@ -1,16 +1,15 @@
 from ex0.CreatureCard import CreatureCard
+from ex0.Card import Rarity
 
 
 def main():
-
     print("\n=== DataDeck Card Foundation ===\n")
-
     print("Testing Abstract Base Class Design:")
 
     fire_dragon = CreatureCard(
         name="Fire Dragon",
         cost=5,
-        rarity="Legendary",
+        rarity=Rarity.LEGENDARY,
         attack=7,
         health=5
     )
@@ -35,7 +34,7 @@ def main():
     goblin = CreatureCard(
         name="Goblin Warrior",
         cost=2,
-        rarity="Common",
+        rarity=Rarity.COMMON,
         attack=3,
         health=2
     )
