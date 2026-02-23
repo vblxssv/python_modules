@@ -32,7 +32,7 @@ class SpellCard(Card):
         if not targets:
             target_name = "target"
         else:
-            target_name = targets[0].name if len(targets) == 1 else f"{len(targets)} targets"
+            target_name = targets[0].name if len(targets) == 1 else f"{len(targets)} targets" # noqa
         actions = {
             Effect.DAMAGE.value: f"Deal {self.cost} damage",
             Effect.HEAL.value: f"Heal {self.cost} health",
