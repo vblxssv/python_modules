@@ -1,26 +1,18 @@
 from ex0.Card import Card
-from enum import Enum
+from ex1.ArtifactCard import Effect
 
-
-class Effect(Enum):
-    DAMAGE = "damage"
-    HEAL = "heal"
-    BUFF = "buff"
-    DEBUFF = "debuff"
-
+from ex0.Card import Card
+from ex1.ArtifactCard import Effect
 
 class SpellCard(Card):
-    """Concrete implementation of a spell card"""
     def __init__(self, name: str, cost: int, rarity: str, effect_type: str):
         super().__init__(name, cost, rarity)
         self.effect_type = effect_type
 
     def play(self, game_state: dict) -> dict:
-        """
-        Execute the spell using available mana.
-        Returns a dictionary describing the effect.
-        """
-        if not self.is_playable(game_state.get("mana", 0)):
+        current_mana = game_state.get("mana", 0)
+        
+        if current_mana < self.cost:
             return {
                 "card_played": self.name,
                 "mana_used": 0,
@@ -28,27 +20,45 @@ class SpellCard(Card):
             }
 
         game_state["mana"] -= self.cost
-
-        effect_result = self.resolve_effect(game_state.get("targets", []))
+        targets = game_state.get("targets", [])
+        
+        # Одноразовое использование: удаляем себя из руки, если она есть в state
+        hand = game_state.get("hand", [])
+        if self in hand:
+            hand.remove(self)
+        
+        effect_data = self.resolve_effect(targets)
+        
         return {
             "card_played": self.name,
             "mana_used": self.cost,
-            "effect": effect_result["effect"]
+            "effect": effect_data["effect"]
         }
-
+    
     def resolve_effect(self, targets: list) -> dict:
-        """
-        Returns the spell effect.
-        For demonstration, we assume damage = cost.
-        """
-        target_name = targets[0] if targets else "target"
-        if self.effect_type == Effect.DAMAGE:
-            return {"effect": f"Deal {self.cost} damage to {target_name}"}
-        elif self.effect_type == Effect.HEAL:
-            return {"effect": f"Heal {self.cost} health to {target_name}"}
-        elif self.effect_type == Effect.BUFF:
-            return {"effect": f"Buff {target_name} by {self.cost}"}
-        elif self.effect_type == Effect.DEBUFF:
-            return {"effect": f"Debuff {target_name} by {self.cost}"}
+        if not targets:
+            # Для соответствия твоему примеру вывода: "Deal 3 damage to target"
+            target_name = "target"
         else:
-            return {"effect": "Unknown effect"}
+            target_name = targets[0].name if len(targets) == 1 else f"{len(targets)} targets"
+        
+        actions = {
+            Effect.DAMAGE.value: f"Deal {self.cost} damage",
+            Effect.HEAL.value: f"Heal {self.cost} health",
+            Effect.BUFF.value: f"Buff {self.cost} stats",
+            Effect.DEBUFF.value: f"Debuff {self.cost} stats"
+        }
+        
+        # Реальное применение эффекта к объектам
+        for target_obj in targets:
+            if self.effect_type == Effect.DAMAGE.value:
+                target_obj.health -= self.cost
+            elif self.effect_type == Effect.HEAL.value:
+                target_obj.health += self.cost
+            elif self.effect_type == Effect.BUFF.value:
+                target_obj.attack += self.cost
+            elif self.effect_type == Effect.DEBUFF.value:
+                target_obj.attack -= self.cost
+
+        prefix = actions.get(self.effect_type, "Applied effect")
+        return {"effect": f"{prefix} to {target_name}"}
