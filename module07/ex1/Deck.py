@@ -3,6 +3,7 @@ from ex1.SpellCard import SpellCard
 from ex1.ArtifactCard import ArtifactCard
 from ex0.CreatureCard import CreatureCard
 
+
 class Deck:
     def __init__(self):
         self.cards = []
@@ -28,7 +29,8 @@ class Deck:
     def get_deck_stats(self) -> dict:
         total = len(self.cards)
         if total == 0:
-            return {'total_cards': 0, 'creatures': 0, 'spells': 0, 'artifacts': 0, 'avg_cost': 0.0}
+            return {'total_cards': 0, 'creatures': 0, 'spells': 0,
+                    'artifacts': 0, 'avg_cost': 0.0}
 
         creatures = sum(1 for c in self.cards if isinstance(c, CreatureCard))
         spells = sum(1 for c in self.cards if isinstance(c, SpellCard))
