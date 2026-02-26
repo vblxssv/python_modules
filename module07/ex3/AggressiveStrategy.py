@@ -1,108 +1,67 @@
+from typing import List, Dict, Any
 from ex3.GameStrategy import GameStrategy
+from ex0.Card import Card
+from ex0.CreatureCard import CreatureCard
 
 
 class AggressiveStrategy(GameStrategy):
-
-    def execute_turn(self, hand: list, battlefield: list) -> dict:
-        """
-        Executes aggressive turn:
-        - Plays lowest-cost creatures first
-        - Attacks with all creatures
-        - Prioritizes enemy creatures, then player
-        """
-
-        turn_result = {
-            "strategy": self.get_strategy_name(),
-            "cards_played": [],
-            "attacks": [],
-            "mana_remaining": 0,
-            "battlefield_state": [],
-            "summary": ""
-        }
-
-        game_state = {
-            "mana": self.available_mana,
-            "battlefield": battlefield,
-            "enemy_battlefield": self.enemy_battlefield,
-            "enemy_player": self.enemy_player
-        }
-
-        creatures_in_hand = [
-            card for card in hand if isinstance(card, CreatureCard)
-        ]
-
-        creatures_in_hand.sort(key=lambda c: c.cost)
-
-        for creature in creatures_in_hand:
-            if creature.cost <= game_state["mana"]:
-                result = creature.play(game_state)
-
-                if result["mana_used"] > 0:
-                    battlefield.append(creature)
-                    turn_result["cards_played"].append(result)
-        targets = self.prioritize_targets(
-            self.enemy_battlefield + [self.enemy_player]
-        )
-
-        for creature in battlefield:
-
-            if creature.health <= 0:
-                continue
-
-            if not targets:
-                break
-
-            target = targets[0]
-
-            attack_result = creature.attack_target(target)
-            turn_result["attacks"].append(attack_result)
-
-            # Remove dead creature targets
-            if hasattr(target, "health") and target.health <= 0:
-                if target in self.enemy_battlefield:
-                    self.enemy_battlefield.remove(target)
-                targets = self.prioritize_targets(
-                    self.enemy_battlefield + [self.enemy_player]
-                )
-
-        # 3. Final state
-        turn_result["mana_remaining"] = game_state["mana"]
-
-        turn_result["battlefield_state"] = [
-            creature.get_card_info() for creature in battlefield
-        ]
-
-        # 4. Summary
-        turn_result["summary"] = (
-            f"Aggressive turn complete: "
-            f"{len(turn_result['cards_played'])} creatures played, "
-            f"{len(turn_result['attacks'])} attacks executed."
-        )
-
-        return turn_result
-
+    """
+    Concrete strategy: Aggressive.
+    Focuses on low-cost cards, maximum damage, and face-targeting.
+    """
 
     def get_strategy_name(self) -> str:
-        return "Aggressive Strategy"
+        """Returns the identifier of the strategy."""
+        return "AggressiveStrategy"
 
-
-    def prioritize_targets(self, available_targets: list) -> list:
+    def prioritize_targets(self, available_targets: List[Dict]) -> List[Dict]:
         """
-        Priority:
-        1. Enemy creatures with lowest health (easy kills)
-        2. Enemy player last
+        Prioritizes targets: Enemy Player first, then lowest health creatures.
+        In Aggressive mode, 'Face is the place'.
         """
+        # Sort targets: 'Player' always comes first, then by health ascending
+        return sorted(
+            available_targets, 
+            key=lambda t: (0 if t.get("type") == "Player" else 1, t.get("health", 0))
+        )
 
-        creatures = [
-            target for target in available_targets
-            if isinstance(target, CreatureCard)
-        ]
+    def execute_turn(self, hand: List[Card], battlefield: List[CreatureCard]) -> Dict[str, Any]:
+        """
+        Simulates turn execution: 
+        1. Plays low-cost cards from hand.
+        2. Attacks with creatures already on the battlefield.
+        """
+        game_state = {"mana": 10} # Context mana for the turn simulation
+        cards_played = []
+        mana_start = game_state["mana"]
+        
+        # --- PHASE 1: Playing Cards ---
+        # Sort hand: Low cost first for board presence
+        playable_in_order = sorted(
+            [c for c in hand if c.is_playable(game_state["mana"])],
+            key=lambda c: c.cost
+        )
 
-        player = [
-            target for target in available_targets
-            if not isinstance(target, CreatureCard)
-        ]
+        for card in playable_in_order:
+            if card.is_playable(game_state["mana"]):
+                card.play(game_state)
+                cards_played.append(card.name)
+            else:
+                break
 
-        creatures.sort(key=lambda c: c.health)
+        # --- PHASE 2: Attacking ---
+        # In a real game, battlefield would contain CreatureCard instances
+        total_damage = sum(getattr(c, 'attack', 0) for c in battlefield)
+        
+        # Define available targets for prioritization
+        targets = [{"name": "Enemy Player", "type": "Player", "health": 30}]
+        prioritized = self.prioritize_targets(targets)
 
-        return creatures + player
+        return {
+            "strategy": self.get_strategy_name(),
+            "cards_played": cards_played,
+            "mana_used": mana_start - game_state["mana"],
+            "targets_attacked": [t["name"] for t in prioritized],
+            "damage_dealt": total_damage + sum(getattr(c, 'attack', 0) for c in hand if c.name in cards_played and isinstance(c, CreatureCard)),
+            "combat_resolved": True
+        }
