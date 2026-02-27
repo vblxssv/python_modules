@@ -28,7 +28,6 @@ def check_dependencies() -> bool:
 
 def perform_analysis():
     """Perform data processing and visualization after dependency check."""
-    # Importing inside function to avoid ImportError before check_dependencies
     import pandas as pd
     import numpy as np
     import matplotlib.pyplot as plt
@@ -37,7 +36,6 @@ def perform_analysis():
     n_points = 1000
     print(f"Processing {n_points} data points...")
 
-    # Simulating Matrix noise signal
     time = np.linspace(0, 10, n_points)
     signal = np.sin(time) + np.random.normal(0, 0.2, n_points)
 
@@ -47,7 +45,6 @@ def perform_analysis():
     plt.figure(figsize=(10, 6))
     plt.plot(df['time'], df['code_stream'], color='#00FF41', linewidth=0.7)
 
-    # Styling for that Matrix look
     plt.title("NEURAL KINETICS: SIGNAL ANALYSIS", color='#00FF41', fontsize=14)
     plt.gcf().set_facecolor('black')
     plt.gca().set_facecolor('black')
@@ -64,28 +61,23 @@ def main():
     """Run the main system check and signal analysis."""
     print("LOADING STATUS: Loading programs...")
 
-    # 1. Check for dependencies first
     if not check_dependencies():
         print("\nERROR: Systems not synchronized. Missing guns.")
         print("To install via pip: pip install -r requirements.txt")
         print("To install via Poetry: poetry install")
         sys.exit(1)
 
-    # 2. Run analysis if OK
     try:
         perform_analysis()
     except Exception as e:
         print(f"CRITICAL ERROR: Matrix glitch - {e}")
         sys.exit(1)
 
-    # 3. Final system report
     print("\n[SYSTEM REPORT]")
-    # Detecting if we are in a virtual environment
     is_venv = sys.prefix != sys.base_prefix
     env_type = "Isolated (venv/poetry)" if is_venv else "Global (unsafe)"
     print(f"Environment: {env_type}")
 
-    # Logic to show if Poetry is being used
     if os.path.exists("poetry.lock"):
         print("Dependency Lock: Detected (Poetry is managing reality)")
     else:

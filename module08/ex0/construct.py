@@ -5,7 +5,6 @@ import sys
 
 def get_venv_status() -> str | None:
     """Return the name of the venv if active, otherwise None."""
-    # Standard check for virtual environment
     if sys.prefix != sys.base_prefix:
         return os.path.basename(sys.prefix)
     return None
@@ -17,7 +16,6 @@ def main() -> None:
     current_python: str = sys.executable
 
     if venv_name:
-        # Scenario: Inside the virtual environment
         print("MATRIX STATUS: Welcome to the construct")
         print(f"Current Python: {current_python}")
         print(f"Virtual Environment: {venv_name}")
@@ -26,10 +24,8 @@ def main() -> None:
         print("Safe to install packages without affecting")
         print("the global system.")
         print("\nPackage installation path:")
-        # Displaying the first site-packages directory found
         print(site.getsitepackages()[0])
     else:
-        # Scenario: Global environment
         print("MATRIX STATUS: You're still plugged in")
         print(f"Current Python: {current_python}")
         print("Virtual Environment: None detected")
