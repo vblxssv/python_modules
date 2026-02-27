@@ -1,17 +1,23 @@
-from pydantic import BaseModel, Field, ValidationError, model_validator
+from __future__ import annotations
 from datetime import datetime
-from typing import Optional
 from enum import Enum
+from typing import Optional
 
-# V.2 Requirements: ContactType Enum
+from pydantic import BaseModel, Field, ValidationError, model_validator
+
+
 class ContactType(str, Enum):
+    """Enumeration of possible alien contact types."""
+
     radio = "radio"
     visual = "visual"
     physical = "physical"
     telepathic = "telepathic"
 
-# AlienContact Model
+
 class AlienContact(BaseModel):
+    """Model for validating alien contact reports with business rules."""
+
     contact_id: str = Field(min_length=5, max_length=15)
     timestamp: datetime
     location: str = Field(min_length=3, max_length=100)
@@ -23,30 +29,35 @@ class AlienContact(BaseModel):
     is_verified: bool = False
 
     @model_validator(mode='after')
-    def check_business_rules(self) -> 'AlienContact':
-        # 1. Contact ID must start with "AC"
+    def check_business_rules(self) -> AlienContact:
+        """Validate complex business rules after field validation."""
+
         if not self.contact_id.startswith("AC"):
             raise ValueError('Contact ID must start with "AC"')
 
-        # 2. Physical contact reports must be verified
-        if self.contact_type == ContactType.physical and not self.is_verified:
+        is_physical = self.contact_type == ContactType.physical
+        if is_physical and not self.is_verified:
             raise ValueError('Physical contact reports must be verified')
 
-        # 3. Telepathic contact requires at least 3 witnesses
-        if self.contact_type == ContactType.telepathic and self.witness_count < 3:
-            raise ValueError('Telepathic contact requires at least 3 witnesses')
+        is_tele = self.contact_type == ContactType.telepathic
+        if is_tele and self.witness_count < 3:
+            raise ValueError(
+                'Telepathic contact requires at least 3 witnesses'
+            )
 
-        # 4. Strong signals (> 7.0) should include received messages
         if self.signal_strength > 7.0 and not self.message_received:
-            raise ValueError('Strong signals (> 7.0) should include received messages')
-            
+            raise ValueError(
+                'Strong signals (> 7.0) should include received messages'
+            )
+
         return self
 
+
 def main():
+    """Demonstrate validation of alien contact logs."""
     print("Alien Contact Log Validation")
     print("=" * 38)
 
-    # 1. Создание валидного экземпляра
     try:
         valid_data = {
             "contact_id": "AC_2024_001",
@@ -59,7 +70,7 @@ def main():
             "message_received": "Greetings from Zeta Reticuli"
         }
         contact = AlienContact(**valid_data)
-        
+
         print("Valid contact report:")
         print(f"ID: {contact.contact_id}")
         print(f"Type: {contact.contact_type.value}")
@@ -68,13 +79,12 @@ def main():
         print(f"Duration: {contact.duration_minutes} minutes")
         print(f"Witnesses: {contact.witness_count}")
         print(f"Message: '{contact.message_received}'")
-        
+
     except ValidationError as e:
         print(f"Unexpected error: {e}")
 
     print("=" * 38)
 
-    # 2. Попытка создания невалидного экземпляра (telepathic < 3 witnesses)
     print("Expected validation error:")
     try:
         invalid_data = {
@@ -84,14 +94,13 @@ def main():
             "contact_type": "telepathic",
             "signal_strength": 5.0,
             "duration_minutes": 10,
-            "witness_count": 1  # Ошибка здесь
+            "witness_count": 1
         }
         AlienContact(**invalid_data)
     except ValidationError as e:
-        # Извлекаем только чистое сообщение об ошибке (Value error, ...)
-        # Убираем префикс "Value error, ", чтобы соответствовать примеру
         raw_msg = e.errors()[0]['msg']
         print(raw_msg.replace("Value error, ", ""))
+
 
 if __name__ == "__main__":
     main()
