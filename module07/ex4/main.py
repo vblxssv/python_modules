@@ -1,7 +1,9 @@
-from .TournamentCard import TournamentCard
-from .TournamentPlatform import TournamentPlatform
+from ex4.TournamentCard import TournamentCard
+from ex4.TournamentPlatform import TournamentPlatform
+
 
 def main():
+    """Execute the tournament platform demonstration."""
     print("=== DataDeck Tournament Platform ===")
     platform = TournamentPlatform()
 
@@ -25,12 +27,14 @@ def main():
     leaderboard = platform.get_leaderboard()
     for i, card in enumerate(leaderboard, 1):
         info = card.get_rank_info()
-        print(f"{i}. {card.name} - Rating: {info['rating']} ({info['record']})")
+        print(f"{i}. {card.name} - Rating: {info['rating']} ({info['record']})"
+              )
 
     print("\nPlatform Report:")
     print(platform.generate_tournament_report())
     print("\n=== Tournament Platform Successfully Deployed! ===")
     print("All abstract patterns working together harmoniously!")
+
 
 if __name__ == "__main__":
     main()

@@ -2,8 +2,10 @@ from ex0.Card import Card
 
 
 class CreatureCard(Card):
-    def __init__(self, name: str, cost: int,
-                 rarity: str, attack: int, health: int):
+    """Concrete implementation of a creature card with attack and health."""
+
+    def __init__(self, name: str, cost: int, rarity: str,
+                 attack: int, health: int):
         super().__init__(name, cost, rarity)
         if not isinstance(attack, int) or attack <= 0:
             raise ValueError("Attack must be a positive integer")
@@ -13,21 +15,22 @@ class CreatureCard(Card):
         self.health = health
 
     def play(self, game_state: dict) -> dict:
-        if self.is_playable(game_state["mana"]):
+        """Summon creature to battlefield if mana is sufficient."""
+        if self.is_playable(game_state.get("mana", 0)):
             game_state["mana"] -= self.cost
             return {
                 "card_played": self.name,
                 "mana_used": self.cost,
                 "effect": "Creature summoned to battlefield"
             }
-        else:
-            return {
-                "card_played": self.name,
-                "mana_used": 0,
-                "effect": "Not enough mana to summon creature"
-            }
+        return {
+            "card_played": self.name,
+            "mana_used": 0,
+            "effect": "Not enough mana to summon creature"
+        }
 
-    def attack_target(self, target) -> dict:
+    def attack_target(self, target: 'CreatureCard') -> dict:
+        """Reduce target health by this creature's attack value."""
         damage = self.attack
         target.health -= damage
         if target.health < 0:
@@ -40,8 +43,11 @@ class CreatureCard(Card):
         }
 
     def get_card_info(self) -> dict:
+        """Return extended information including creature statistics."""
         info = super().get_card_info()
-        info["type"] = "Creature"
-        info["attack"] = self.attack
-        info["health"] = self.health
+        info.update({
+            "type": "Creature",
+            "attack": self.attack,
+            "health": self.health
+        })
         return info
