@@ -1,11 +1,13 @@
 import functools
 import time
 import re
+from typing import Callable, Any
 
-def spell_timer(func: callable) -> callable:
-    """Декоратор для измерения времени выполнения заклинания."""
+
+def spell_timer(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Decorator that measures and prints function execution time."""
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         print(f"Casting {func.__name__}...")
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
@@ -15,73 +17,87 @@ def spell_timer(func: callable) -> callable:
         return result
     return wrapper
 
-def power_validator(min_power: int) -> callable:
-    """Фабрика декораторов для проверки уровня магической силы."""
-    def decorator(func: callable):
+
+def power_validator(min_power: int) -> Callable[..., Any]:
+    """Decorator factory that validates the power level of a spell."""
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            # Проверяем первый позиционный аргумент (power). 
-            # Если это метод класса, первым будет self, поэтому берем args[1]
-            # В данном задании для cast_spell(self, name, power) сила — это второй аргумент (index 2)
-            # Однако, чтобы сделать его универсальным, проверим аргумент 'power' или второй/третий в списке
-            pwr = kwargs.get('power') or (args[2] if len(args) > 2 else args[0])
-            
-            if pwr >= min_power:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            # Check for 'power' in kwargs or specific positions in args
+            # For cast_spell(self, spell_name, power), power is args[2]
+            pwr = kwargs.get('power')
+            if pwr is None:
+                if len(args) > 2:  # Method call: (self, name, power)
+                    pwr = args[2]
+                elif len(args) > 0:  # Direct call: (power, ...)
+                    pwr = args[0]
+
+            if pwr is not None and pwr >= min_power:
                 return func(*args, **kwargs)
             return "Insufficient power for this spell"
         return wrapper
     return decorator
 
-def retry_spell(max_attempts: int) -> callable:
-    """Декоратор для повторных попыток произнесения заклинания."""
-    def decorator(func: callable):
+
+def retry_spell(max_attempts: int) -> Callable[..., Any]:
+    """Decorator that retries a function call upon exception."""
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             for attempt in range(1, max_attempts + 1):
                 try:
                     return func(*args, **kwargs)
                 except Exception:
-                    print(f"Spell failed, retrying... (attempt {attempt}/{max_attempts})")
+                    print(f"Spell failed, retrying... "
+                          f"(attempt {attempt}/{max_attempts})")
             return f"Spell casting failed after {max_attempts} attempts"
         return wrapper
     return decorator
 
+
 class MageGuild:
+    """Class representing a guild of mages with spell-casting logic."""
+
     @staticmethod
     def validate_mage_name(name: str) -> bool:
-        """Статический метод для валидации имени мага."""
-        # Минимум 3 символа, только буквы и пробелы
+        """Validate name: min 3 chars, letters and spaces only."""
         if len(name) < 3:
             return False
         return bool(re.fullmatch(r"[A-Za-z\s]+", name))
 
     @power_validator(min_power=10)
     def cast_spell(self, spell_name: str, power: int) -> str:
-        """Экземплярный метод для произнесения заклинания."""
+        """Cast a spell if power level is sufficient."""
         return f"Successfully cast {spell_name} with {power} power"
 
-# --- Демонстрация работы ---
+
+# --- Demonstration funcs ---
+
 
 @spell_timer
-def fireball():
-    time.sleep(0.1) # Симуляция долгого каста
+def fireball() -> str:
+    """Simulate a long fireball cast."""
+    time.sleep(0.1)
     return "Fireball cast!"
 
+
 def main():
+    """Run demonstrations for decorators and class methods."""
     print("Testing spell timer...")
     result = fireball()
     print(f"Result: {result}")
 
     print("\nTesting MageGuild...")
     guild = MageGuild()
-    
-    # Тест статического метода
-    print(guild.validate_mage_name("Gandalf")) # True
-    print(guild.validate_mage_name("G2"))       # False
 
-    # Тест валидатора силы
-    print(guild.cast_spell("Lightning", 15))    # Успех
-    print(guild.cast_spell("Fire", 5))          # Ошибка
+    # Test staticmethod
+    print(guild.validate_mage_name("Gandalf"))
+    print(guild.validate_mage_name("G2"))
+
+    # Test power_validator
+    print(guild.cast_spell("Lightning", 15))
+    print(guild.cast_spell("Fire", 5))
+
 
 if __name__ == "__main__":
     main()

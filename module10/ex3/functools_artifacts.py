@@ -1,10 +1,10 @@
 import functools
 import operator
+from typing import List, Dict, Callable, Any
 
-# Инициализация артефакта свертки
-def spell_reducer(spells: list[int], operation: str) -> int:
-    """Комбинирует силы заклинаний, используя functools.reduce."""
-    # Словарь сопоставления строк и функций из модуля operator
+
+def spell_reducer(spells: List[int], operation: str) -> int:
+    """Reduce spell powers using functools.reduce and operator functions."""
     ops = {
         "add": operator.add,
         "multiply": operator.mul,
@@ -13,64 +13,71 @@ def spell_reducer(spells: list[int], operation: str) -> int:
     }
     return functools.reduce(ops[operation], spells)
 
-# Базовая функция для частичного применения
-def base_enchantment(power, element, target):
+
+def base_enchantment(power: int, element: str, target: str) -> str:
+    """Apply a base enchantment with power, element, and target."""
     return f"Enchanted {target} with {element} (Power: {power})"
 
-def partial_enchanter(base_enchantment: callable) -> dict[str, callable]:
-    """Создает специализированные версии функции через functools.partial."""
+
+def partial_enchanter(
+    base_func: Callable[[int, str, str], str]
+) -> Dict[str, Callable[[str], str]]:
+    """Create specialized partial applications of the base enchantment."""
     return {
-        'fire_enchant': functools.partial(base_enchantment, 50, "Fire"),
-        'ice_enchant': functools.partial(base_enchantment, 50, "Ice"),
-        'lightning_enchant': functools.partial(base_enchantment, 50, "Lightning")
+        'fire_enchant': functools.partial(base_func, 50, "Fire"),
+        'ice_enchant': functools.partial(base_func, 50, "Ice"),
+        'lightning_enchant': functools.partial(base_func, 50, "Lightning")
     }
 
-# Артефакт кэширования (мемоизации)
+
 @functools.lru_cache(maxsize=None)
 def memoized_fibonacci(n: int) -> int:
-    """Вычисляет число Фибоначчи с использованием кэша."""
+    """Calculate Fibonacci number with LRU caching for optimization."""
     if n < 2:
         return n
     return memoized_fibonacci(n - 1) + memoized_fibonacci(n - 2)
 
-# Артефакт множественной диспетчеризации
-def spell_dispatcher() -> callable:
-    """Создает систему обработки заклинаний на основе типов данных."""
+
+def spell_dispatcher() -> Callable[[Any], str]:
+    """Create a single-dispatch system to handle different spell types."""
     @functools.singledispatch
-    def dispatcher(spell):
+    def dispatcher(spell: Any) -> str:
         return f"Unknown spell type: {spell}"
 
     @dispatcher.register(int)
-    def _(damage):
+    def _(damage: int) -> str:
         return f"Direct Damage Spell: {damage} HP"
 
     @dispatcher.register(str)
-    def _(enchantment):
+    def _(enchantment: str) -> str:
         return f"Applied Enchantment: {enchantment}"
 
     @dispatcher.register(list)
-    def _(multi_cast):
+    def _(multi_cast: list) -> str:
         return f"Multi-casting: {', '.join(map(str, multi_cast))}"
 
     return dispatcher
 
+
 def main():
-    # 1. Тестирование spell_reducer
+    """Execute demonstration of functools artifacts."""
+    # 1. Testing spell_reducer
     print("Testing spell reducer...")
     spells = [10, 20, 30, 40]
     print(f"Sum: {spell_reducer(spells, 'add')}")
     print(f"Product: {spell_reducer(spells, 'multiply')}")
     print(f"Max: {spell_reducer(spells, 'max')}")
 
-    # 2. Тестирование memoized_fibonacci
+    # 2. Testing memoized_fibonacci
     print("\nTesting memoized fibonacci...")
     print(f"Fib(10): {memoized_fibonacci(10)}")
     print(f"Fib(15): {memoized_fibonacci(15)}")
-    
-    # 3. Демонстрация dispatcher (опционально, для полноты)
-    dispatch = spell_dispatcher()
+
+    # 3. Demonstration of dispatcher
+    # dispatch = spell_dispatcher()
     # print(dispatch(100))
     # print(dispatch("Shield"))
+
 
 if __name__ == "__main__":
     main()
