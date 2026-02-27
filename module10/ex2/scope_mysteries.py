@@ -1,4 +1,3 @@
-# scope_mysteries.py
 
 def mage_counter() -> callable:
     """Создает счетчик, который увеличивается при каждом вызове."""
@@ -21,7 +20,6 @@ def spell_accumulator(initial_power: int) -> callable:
 def enchantment_factory(enchantment_type: str) -> callable:
     """Создает функции для зачарования предметов."""
     def enchant(item_name: str):
-        # Здесь nonlocal не нужен, так как мы только читаем enchantment_type
         return f"{enchantment_type} {item_name}"
     return enchant
 
@@ -30,8 +28,6 @@ def memory_vault() -> dict[str, callable]:
     vault = {}
     
     def store(key: str, value):
-        # Словари — мутабельные объекты, поэтому nonlocal не обязателен, 
-        # но мы модифицируем содержимое словаря, захваченного замыканием.
         vault[key] = value
         
     def recall(key: str):
@@ -40,14 +36,12 @@ def memory_vault() -> dict[str, callable]:
     return {"store": store, "recall": recall}
 
 def main():
-    # Тестирование mage counter
     print("Testing mage counter...")
     counter = mage_counter()
     print(f"Call 1: {counter()}")
     print(f"Call 2: {counter()}")
     print(f"Call 3: {counter()}")
 
-    # Тестирование enchantment factory
     print("\nTesting enchantment factory...")
     fire_enchant = enchantment_factory("Flaming")
     ice_enchant = enchantment_factory("Frozen")

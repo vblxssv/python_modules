@@ -1,4 +1,3 @@
-# higher_magic.py
 
 def spell_combiner(spell1: callable, spell2: callable) -> callable:
     """Возвращает функцию, которая вызывает оба заклинания и возвращает кортеж результатов."""
@@ -26,7 +25,7 @@ def spell_sequence(spells: list[callable]) -> callable:
         return [s(*args, **kwargs) for s in spells]
     return run_sequence
 
-# --- Функции для демонстрации ---
+# ---Demonstration funcs ---
 
 def fireball(target):
     return f"Fireball hits {target}"
@@ -38,13 +37,11 @@ def get_base_damage(target):
     return 10
 
 def main():
-    # Тестирование spell_combiner
     print("Testing spell combiner...")
     combined = spell_combiner(fireball, heal)
     res1, res2 = combined("Dragon")
     print(f"Combined spell result: {res1}, {res2}")
 
-    # Тестирование power_amplifier
     print("\nTesting power amplifier...")
     multiplier = 3
     mega_fireball = power_amplifier(get_base_damage, multiplier)
