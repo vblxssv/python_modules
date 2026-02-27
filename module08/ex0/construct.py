@@ -1,15 +1,18 @@
-import sys
 import os
 import site
+import sys
+
 
 def get_venv_status() -> str | None:
-    """Returns the name of the venv if active, otherwise None."""
+    """Return the name of the venv if active, otherwise None."""
     # Standard check for virtual environment
     if sys.prefix != sys.base_prefix:
         return os.path.basename(sys.prefix)
     return None
 
+
 def main() -> None:
+    """Check and display the current Python environment status."""
     venv_name: str | None = get_venv_status()
     current_python: str = sys.executable
 
@@ -34,9 +37,10 @@ def main() -> None:
         print("The machines can see everything you install.")
         print("\nTo enter the construct, run:")
         print("  python -m venv matrix_env")
-        print("  source matrix_env/bin/activate  # On Unix")
-        print("  matrix_env\\Scripts\\activate      # On Windows")
+        print("  source matrix_env/bin/activate      # On Unix")
+        print("  matrix_env\\Scripts\\activate         # On Windows")
         print("\nThen run this program again.")
+
 
 if __name__ == "__main__":
     main()
