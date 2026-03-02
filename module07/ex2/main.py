@@ -2,6 +2,7 @@ from ex2.EliteCard import EliteCard
 
 
 def main():
+    """Demonstrate multiple interface implementation in EliteCard."""
     warrior = EliteCard(name="Arcane Warrior", cost=5, rarity="Elite")
 
     print("=== DataDeck Ability System ===")
@@ -17,8 +18,9 @@ def main():
     print(f"Attack result: {warrior.attack('Enemy')}")
     print(f"Defense result: {warrior.defend(5)}")
 
-    print("Magic phase:")
-    print(f"Spell cast: {warrior.cast_spell('Fireball', ['Enemy1', 'Enemy2'])}")
+    print("\nMagic phase:")
+    print(f"Spell cast: {warrior.cast_spell('Fireball', ['Enemy1', 'Enemy2'])}"
+          )
     print(f"Mana channel: {warrior.channel_mana(3)}")
 
     print("\nMultiple interface implementation successful!")
