@@ -42,22 +42,18 @@ class SpaceMission(BaseModel):
     @model_validator(mode='after')
     def validate_mission_safety(self) -> SpaceMission:
         """Validate safety requirements for the mission and crew."""
-        # 1. Mission ID must start with "M"
         if not self.mission_id.startswith("M"):
             raise ValueError('Mission ID must start with "M"')
 
-        # 2. Must have at least one Commander or Captain
         senior_ranks = {Rank.commander, Rank.captain}
         if not any(member.rank in senior_ranks for member in self.crew):
             raise ValueError(
                 'Mission must have at least one Commander or Captain'
             )
 
-        # 3. All crew members must be active
         if not all(member.is_active for member in self.crew):
             raise ValueError('All crew members must be active')
 
-        # 4. Long missions (> 365 days) need 50% experienced crew (5+ years)
         if self.duration_days > 365:
             exp_crew = [m for m in self.crew if m.years_experience >= 5]
             if len(exp_crew) < (len(self.crew) / 2):
@@ -73,7 +69,6 @@ def main():
     print("Space Mission Crew Validation")
     print("=" * 41)
 
-    # 1. Создание валидной миссии
     try:
         crew_list = [
             CrewMember(
@@ -116,7 +111,6 @@ def main():
 
     print("=" * 41)
 
-    # 2. Попытка создания невалидной миссии
     print("Expected validation error:")
     try:
         invalid_crew = [

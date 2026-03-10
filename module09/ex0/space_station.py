@@ -63,3 +63,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ge (Greater than or Equal):
+# le (Less than or Equal):
+# gt (Greater Than):
+# lt (Less Than):
+
+# min_length: Минимальное количество символов.
+# max_length: Максимальное количество символов.
+# pattern: Проверка строки через регулярное выражение
