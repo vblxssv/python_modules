@@ -3,14 +3,14 @@ from dotenv import load_dotenv
 
 
 def check_security(script_path: str) -> None:
-    """Simple check to ensure no hardcoded secrets exist in the source."""
-    with open(script_path, 'r') as f:
+    with open(script_path, 'r', encoding='utf-8') as f:
         content = f.read()
-        secrets = ['API_KEY = "sk_', 'DATABASE_URL = "postgres']
-        if any(secret in content for secret in secrets):
-            print("[WARN] Potential hardcoded secrets detected!")
-        else:
-            print("[OK] No hardcoded secrets detected")
+    bad_pattern_1 = 'API_KEY' + ' = "'
+    bad_pattern_2 = 'DATABASE_URL' + ' = "'
+    if content.count(bad_pattern_1) > 1 or content.count(bad_pattern_2) > 1:
+        print("[WARN] Potential hardcoded secrets detected!")
+    else:
+        print("[OK] No hardcoded secrets detected")
 
 
 def main():

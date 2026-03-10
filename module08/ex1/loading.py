@@ -36,6 +36,7 @@ def perform_analysis():
     n_points = 1000
     print(f"Processing {n_points} data points...")
 
+    # Signal generation
     time = np.linspace(0, 10, n_points)
     signal = np.sin(time) + np.random.normal(0, 0.2, n_points)
 
@@ -45,6 +46,7 @@ def perform_analysis():
     plt.figure(figsize=(10, 6))
     plt.plot(df['time'], df['code_stream'], color='#00FF41', linewidth=0.7)
 
+    # Matrix styling
     plt.title("NEURAL KINETICS: SIGNAL ANALYSIS", color='#00FF41', fontsize=14)
     plt.gcf().set_facecolor('black')
     plt.gca().set_facecolor('black')
@@ -62,9 +64,7 @@ def main():
     print("LOADING STATUS: Loading programs...")
 
     if not check_dependencies():
-        print("\nERROR: Systems not synchronized. Missing guns.")
-        print("To install via pip: pip install -r requirements.txt")
-        print("To install via Poetry: poetry install")
+        print("\nERROR: Systems not synchronized. Missing packages.")
         sys.exit(1)
 
     try:
@@ -75,13 +75,19 @@ def main():
 
     print("\n[SYSTEM REPORT]")
     is_venv = sys.prefix != sys.base_prefix
-    env_type = "Isolated (venv/poetry)" if is_venv else "Global (unsafe)"
-    print(f"Environment: {env_type}")
-
-    if os.path.exists("poetry.lock"):
-        print("Dependency Lock: Detected (Poetry is managing reality)")
+    is_poetry = os.path.exists("poetry.lock") or "POETRY_ACTIVE" in os.environ
+    if is_poetry:
+        env_type = "Isolated (Poetry)"
+        manager = "Poetry"
+    elif is_venv:
+        env_type = "Isolated (venv/pip)"
+        manager = "Standard Pip"
     else:
-        print("Dependency Lock: Not found (Using standard pip)")
+        env_type = "Global (Unsafe)"
+        manager = "Standard Pip"
+
+    print(f"Environment: {env_type}")
+    print(f"Dependency Manager: {manager}")
 
 
 if __name__ == "__main__":
