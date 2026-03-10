@@ -36,7 +36,6 @@ def perform_analysis():
     n_points = 1000
     print(f"Processing {n_points} data points...")
 
-    # Signal generation
     time = np.linspace(0, 10, n_points)
     signal = np.sin(time) + np.random.normal(0, 0.2, n_points)
 
@@ -46,7 +45,6 @@ def perform_analysis():
     plt.figure(figsize=(10, 6))
     plt.plot(df['time'], df['code_stream'], color='#00FF41', linewidth=0.7)
 
-    # Matrix styling
     plt.title("NEURAL KINETICS: SIGNAL ANALYSIS", color='#00FF41', fontsize=14)
     plt.gcf().set_facecolor('black')
     plt.gca().set_facecolor('black')
