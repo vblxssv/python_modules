@@ -49,6 +49,8 @@ def main():
     transformed = spell_transformer(spells)
     print(" ".join(transformed))
 
+    print("\n", mage_stats(artifacts))
+
 
 if __name__ == "__main__":
     main()
