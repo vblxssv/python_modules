@@ -41,7 +41,6 @@ def main():
     print("Testing artifact sorter...")
     sorted_arts = artifact_sorter(artifacts)
     if len(sorted_arts) >= 2:
-        # Разбиваем длинную строку для соответствия лимиту 79/88 символов
         first = f"{sorted_arts[0]['name']} ({sorted_arts[0]['power']} power)"
         second = f"{sorted_arts[1]['name']} ({sorted_arts[1]['power']} power)"
         print(f"{first} comes before {second}")

@@ -61,7 +61,6 @@ def spell_dispatcher() -> Callable[[Any], str]:
 
 def main():
     """Execute demonstration of functools artifacts."""
-    # 1. Testing spell_reducer
     print("Testing spell reducer...")
     spells = [10, 20, 30, 40]
     print(f"Sum: {spell_reducer(spells, 'add')}")

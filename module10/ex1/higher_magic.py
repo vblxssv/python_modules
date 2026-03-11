@@ -31,9 +31,6 @@ def spell_sequence(spells: List[Callable]) -> Callable:
     return run_sequence
 
 
-# --- Demonstration funcs ---
-
-
 def fireball(target: str) -> str:
     """Return fireball hit message."""
     return f"Fireball hits {target}"

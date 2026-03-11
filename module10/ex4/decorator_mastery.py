@@ -23,13 +23,11 @@ def power_validator(min_power: int) -> Callable[..., Any]:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # Check for 'power' in kwargs or specific positions in args
-            # For cast_spell(self, spell_name, power), power is args[2]
             pwr = kwargs.get('power')
             if pwr is None:
-                if len(args) > 2:  # Method call: (self, name, power)
+                if len(args) > 2:
                     pwr = args[2]
-                elif len(args) > 0:  # Direct call: (power, ...)
+                elif len(args) > 0:
                     pwr = args[0]
 
             if pwr is not None and pwr >= min_power:
@@ -71,9 +69,6 @@ class MageGuild:
         return f"Successfully cast {spell_name} with {power} power"
 
 
-# --- Demonstration funcs ---
-
-
 @spell_timer
 def fireball() -> str:
     """Simulate a long fireball cast."""
@@ -90,11 +85,9 @@ def main():
     print("\nTesting MageGuild...")
     guild = MageGuild()
 
-    # Test staticmethod
     print(guild.validate_mage_name("Gandalf"))
     print(guild.validate_mage_name("G2"))
 
-    # Test power_validator
     print(guild.cast_spell("Lightning", 15))
     print(guild.cast_spell("Fire", 5))
 
