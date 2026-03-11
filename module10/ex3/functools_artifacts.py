@@ -37,6 +37,9 @@ def memoized_fibonacci(n: int) -> int:
         return n
     return memoized_fibonacci(n - 1) + memoized_fibonacci(n - 2)
 
+# возвращает специальную функцию которая ведет себя по разному в
+# зависимоти от типа данных
+
 
 def spell_dispatcher() -> Callable[[Any], str]:
     """Create a single-dispatch system to handle different spell types."""
